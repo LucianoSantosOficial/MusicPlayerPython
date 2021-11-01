@@ -1,10 +1,15 @@
 from tkinter import *
 from tkinter import ttk
 from ttkthemes import ThemedTk
+from tkinter import filedialog
+import os
+import pygame
 
 class Player:
 
     def __init__(self):
+
+        pygame.mixer.init()
         
         #JANELA
         self.window = ThemedTk(theme="equilux")
@@ -20,16 +25,18 @@ class Player:
         self.img_previus = PhotoImage(file="assets/previus.png")
         self.img_remove = PhotoImage(file="assets/remove.png")
 
-        self.list = Listbox(self.window, bg="#333333", height=14)
+        self.local = ""
+
+        self.list = Listbox(self.window, bg="#333333", height=13, fg="gray", font="arial 10")
         self.list.pack(fill=X, padx=10, pady=10)
 
         self.frame = ttk.Frame(self.window)
         self.frame.pack(pady=10)
         
-        self.add = ttk.Button(self.frame, image=self.img_add)
+        self.add = ttk.Button(self.frame, image=self.img_add, command=self.select_music)
         self.add.grid(row=0, column=0, padx=2)
 
-        self.remove = ttk.Button(self.frame, image=self.img_remove)
+        self.remove = ttk.Button(self.frame, image=self.img_remove, command=self.delete_music)
         self.remove.grid(row=0, column=1, padx=2)
 
         self.frame2 = ttk.Frame(self.window)
@@ -38,10 +45,10 @@ class Player:
         self.previus = ttk.Button(self.frame2, image=self.img_previus)
         self.previus.grid(row=0, column=0)
 
-        self.play = ttk.Button(self.frame2, image=self.img_play)
+        self.play = ttk.Button(self.frame2, image=self.img_play, command=self.play_music)
         self.play.grid(row=0, column=1)
 
-        self.next = ttk.Button(self.frame2, image=self.img_next)
+        self.next = ttk.Button(self.frame2, image=self.img_next, command=self.next_music)
         self.next.grid(row=0, column=2)
 
         self.volume = ttk.Scale(self.window)
@@ -49,5 +56,25 @@ class Player:
 
 
         self.window.mainloop()
+
+    def select_music(self):
+        self.local = filedialog.askdirectory()
+        file = os.listdir(self.local)
+        
+        for arquivo in file:
+            self.list.insert(END, str(arquivo))
+
+    def delete_music(self):
+        self.list.delete(ANCHOR)
+
+    def next_music(self):
+        index = self.list.curselection()[0] + 1
+
+    def previus_music(self):
+        index = self.list.curselection()[0] - 1
+
+    def play_music(self):
+        pygame.mixer.music.load(str(self.local) + "/" + str(self.list.get(ANCHOR)))
+        pygame.mixer.music.play()
 
 Player()
