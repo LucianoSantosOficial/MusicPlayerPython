@@ -25,6 +25,8 @@ class Player:
         self.img_previus = PhotoImage(file="assets/previus.png")
         self.img_remove = PhotoImage(file="assets/remove.png")
 
+        self.status = 0
+
         self.local = ""
 
         self.list = Listbox(self.window, bg="#333333", height=13, fg="gray", font="arial 10", selectbackground="#6868e6")
@@ -68,21 +70,51 @@ class Player:
         self.list.delete(ANCHOR)
 
     def next_music(self):
-        index = self.list.curselection()[0] + 1
-        self.list.select_clear(0, END)
-        self.list.activate(index)
-        self.list.select_set(index)
-        self.list.yview(index)
+        try:
+            index = self.list.curselection()[0] + 1
+            self.list.select_clear(0, END)
+            self.list.activate(index)
+            self.list.select_set(index)
+            self.list.yview(index)
+        except:
+            self.error_window("Music not found!")
 
     def previus_music(self):
-        index = self.list.curselection()[0] - 1
-        self.list.select_clear(0, END)
-        self.list.activate(index)
-        self.list.select_set(index)
-        self.list.yview(index)
+        try:
+            index = self.list.curselection()[0] - 1
+            self.list.select_clear(0, END)
+            self.list.activate(index)
+            self.list.select_set(index)
+            self.list.yview(index)
+        except:
+            self.error_window("Music not found!")
 
     def play_music(self):
-        pygame.mixer.music.load(str(self.local) + "/" + str(self.list.get(ANCHOR)))
-        pygame.mixer.music.play()
+        try:
+            if self.status == 0:
+                pygame.mixer.music.load(str(self.local) + "/" + str(self.list.get(ANCHOR)))
+                pygame.mixer.music.play()
+                self.play.config(image=self.img_pause)
+                self.status = 1
+            else:
+                pygame.mixer.music.pause()
+                self.status = 0
+
+        except:
+            self.error_window("Not music valid!")
+
+    def error_window(self, message):
+        window = Toplevel()
+        window.title("ERROR")
+        window.geometry("300x300+500+100")
+        window.resizable(0, 0)
+        window.config(bg="#444444")
+
+        text = ttk.Label(window, text=str(message))
+        text.pack(expand=YES)
+
+        btn = ttk.Button(window, text="ok" , command=window.destroy)
+        btn.pack()
+
 
 Player()
