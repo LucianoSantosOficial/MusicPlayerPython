@@ -53,7 +53,7 @@ class Player:
         self.next = ttk.Button(self.frame2, image=self.img_next, command=self.next_music)
         self.next.grid(row=0, column=2)
 
-        self.volume = ttk.Scale(self.window)
+        self.volume = ttk.Scale(self.window, from_= 0, to = 1, command=self.volume_set)
         self.volume.pack(fill=X, padx=10)
 
 
@@ -98,6 +98,7 @@ class Player:
                 self.status = 1
             else:
                 pygame.mixer.music.pause()
+                self.play.config(image=self.img_play)
                 self.status = 0
 
         except:
@@ -114,7 +115,10 @@ class Player:
         text.pack(expand=YES)
 
         btn = ttk.Button(window, text="ok" , command=window.destroy)
-        btn.pack()
+        btn.pack(pady=10)
+
+    def volume_set(self, var):
+        pygame.mixer.music.set_volume(self.volume.get())
 
 
 Player()
