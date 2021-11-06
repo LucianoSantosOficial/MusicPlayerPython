@@ -27,7 +27,7 @@ class Player:
 
         self.local = ""
 
-        self.list = Listbox(self.window, bg="#333333", height=13, fg="gray", font="arial 10")
+        self.list = Listbox(self.window, bg="#333333", height=13, fg="gray", font="arial 10", selectbackground="#6868e6")
         self.list.pack(fill=X, padx=10, pady=10)
 
         self.frame = ttk.Frame(self.window)
@@ -42,7 +42,7 @@ class Player:
         self.frame2 = ttk.Frame(self.window)
         self.frame2.pack(pady=10)
 
-        self.previus = ttk.Button(self.frame2, image=self.img_previus)
+        self.previus = ttk.Button(self.frame2, image=self.img_previus, command=self.previus_music)
         self.previus.grid(row=0, column=0)
 
         self.play = ttk.Button(self.frame2, image=self.img_play, command=self.play_music)
@@ -60,7 +60,7 @@ class Player:
     def select_music(self):
         self.local = filedialog.askdirectory()
         file = os.listdir(self.local)
-        
+
         for arquivo in file:
             self.list.insert(END, str(arquivo))
 
@@ -69,9 +69,17 @@ class Player:
 
     def next_music(self):
         index = self.list.curselection()[0] + 1
+        self.list.select_clear(0, END)
+        self.list.activate(index)
+        self.list.select_set(index)
+        self.list.yview(index)
 
     def previus_music(self):
         index = self.list.curselection()[0] - 1
+        self.list.select_clear(0, END)
+        self.list.activate(index)
+        self.list.select_set(index)
+        self.list.yview(index)
 
     def play_music(self):
         pygame.mixer.music.load(str(self.local) + "/" + str(self.list.get(ANCHOR)))
